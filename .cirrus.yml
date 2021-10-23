@@ -8,6 +8,7 @@ task:
       # image: freebsd-13-0-current-amd64-v20201112 # Image way too large, HIDPI broken and iichid trackpad broken on Acer
 
   env:
+    USER: 1000
     CIRRUS_CLONE_DEPTH: 1
     GITHUB_TOKEN: ENCRYPTED[!0f42e3f70fd51cdeddfe7e98160982fc9efe7e8a26869b725fcd5de05d067a7100b994cf52f0f1b470a983148e0b8ec2!]
     APPLICATION_NAME: Scribus
@@ -31,7 +32,7 @@ task:
     - kldload tmpfs.ko || true
     - kldload nullfs.ko || true
     - kldload geom_uzip.ko || true
-    - pkg install -y pkg wget sha zip ca_root_nss sudo ImageMagick7-nox11
+    - pkg install -y pkg wget sha zip patchelf ca_root_nss sudo ImageMagick7-nox11
     
   Build_script:
     - wget -c https://github.com/$(wget -q https://github.com/helloSystem/ISO/releases/tag/experimental-12.2 -O - | grep "hello-.*.amd64.iso.pkg.zip" | head -n 1 | cut -d '"' -f 2)
