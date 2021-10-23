@@ -44,7 +44,6 @@ task:
     - mkdir -p artifacts/
     - sh ../makebundle
     - mkdir -p artifacts ; mv "${APPLICATION_NAME}"*.zip artifacts/
-    - ls -lh "${CIRRUS_WORKING_DIR}"/work/artifacts/*.zip || false # Error out if zip was not produced to mitigate the above
     
   Upload_script:
     - export VER=$(uname -r | cut -d "-" -f 1) # No way to pass on from Build_script to Upload_script?
