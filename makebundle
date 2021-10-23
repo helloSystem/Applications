@@ -82,8 +82,8 @@ for FILE in $(find "${APPLICATION_NAME}".app/Resources/usr/local/bin/ -type f); 
   ORIG_RPATH=$(patchelf --print-rpath "${FILE}" 2>/dev/null)
   if [ -n "${ORIG_RPATH}" ] ; then
     MOD_RPATH=$(echo "${ORIG_RPATH}" | sed -e 's|/usr/local|\$ORIGIN/../|g')
-    echo patchelf --set-rpath "${MOD_RPATH}:${ORIG_RPATH}" "${FILE}"
-    patchelf --set-rpath "${MOD_RPATH}:${ORIG_RPATH}" "${FILE}"
+    echo patchelf --set-rpath "\$ORIGIN/../lib:${MOD_RPATH}:${ORIG_RPATH}" "${FILE}"
+    patchelf --set-rpath "\$ORIGIN/../lib:${MOD_RPATH}:${ORIG_RPATH}" "${FILE}"
   fi
 done
 
