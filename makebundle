@@ -138,12 +138,12 @@ fi
 
 # Firefox specific fixes
 if [ "${APPLICATION_NAME}" == "Firefox" ] ; then
-  cp Firefox.app/Resources/usr/local/lib/firefox/browser/chrome/icons/default/default128.png Firefox.app/Resources/Firefox.png
+  cp "${APPLICATION_NAME}".app/Resources/usr/local/lib/firefox/browser/chrome/icons/default/default128.png "${APPLICATION_NAME}".app/Resources/"${APPLICATION_NAME}".png
 fi
 
 # Firefox_ESR specific fixes
-if [ "${APPLICATION_NAME}" == "Firefox" ] ; then
-  cp Firefox_ESR.app/Resources/usr/local/lib/firefox/browser/chrome/icons/default/default128.png Firefox_ESR.app/Resources/Firefox_ESR.png
+if [ "${APPLICATION_NAME}" == "Firefox_ESR" ] ; then
+  cp "${APPLICATION_NAME}".app/Resources/usr/local/lib/firefox/browser/chrome/icons/default/default128.png "${APPLICATION_NAME}".app/Resources/"${APPLICATION_NAME}".png
 fi
 
 # Krita specific fixes
