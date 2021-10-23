@@ -155,7 +155,7 @@ fi
 
 # Krita specific fixes
 if [ "${APPLICATION_NAME}" == "Krita" ] ; then
-  cp Krita.app/Resources/usr/local/share/icons/hicolor/128x128/apps/krita.png Krita.app/Resources/Krita.png
+  cp "${APPLICATION_NAME}".app/Resources/usr/local/share/icons/hicolor/128x128/apps/krita.png "${APPLICATION_NAME}".app/Resources/"${APPLICATION_NAME}".png
 fi
 
 # Blender specific fixes
@@ -172,6 +172,12 @@ fi
 if [ "${APPLICATION_NAME}" == "Scribus" ] ; then
   find "${APPLICATION_NAME}".app/Resources/usr/local -type f -exec sed -i '' -e 's|/usr/local|./././././|g' {} \;
   cp "${APPLICATION_NAME}".app/Resources/usr/local/share/icons/hicolor/256x256/apps/scribus.png "${APPLICATION_NAME}".app/Resources/"${APPLICATION_NAME}".png
+fi
+
+# LibreOffice specific fixes
+if [ "${APPLICATION_NAME}" == "LibreOffice" ] ; then
+  ( cd "${APPLICATION_NAME}" ; -s Resources/usr/local/lib . )
+  cp "${APPLICATION_NAME}".app/Resources/usr/local/share/icons/hicolor/256x256/apps/libreoffice-main.png "${APPLICATION_NAME}".app/Resources/"${APPLICATION_NAME}".png
 fi
 
 sudo chown -R $USER "${APPLICATION_NAME}".app 
