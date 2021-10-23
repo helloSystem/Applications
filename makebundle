@@ -176,7 +176,7 @@ fi
 
 # LibreOffice specific fixes
 if [ "${APPLICATION_NAME}" == "LibreOffice" ] ; then
-  ( cd "${APPLICATION_NAME}" ; -s Resources/usr/local/lib . )
+  ( cd "${APPLICATION_NAME}".app ; -s Resources/usr/local/lib . )
   cp "${APPLICATION_NAME}".app/Resources/usr/local/share/icons/hicolor/256x256/apps/libreoffice-main.png "${APPLICATION_NAME}".app/Resources/"${APPLICATION_NAME}".png
 fi
 
