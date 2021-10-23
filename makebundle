@@ -193,4 +193,4 @@ zip -r -y "${APPLICATION_NAME}".app.zip "${APPLICATION_NAME}".app
 sudo chown -R $USER "${APPLICATION_NAME}".app.zip
 
 # Try to launch it
-launch "${APPLICATION_NAME}".app
+# launch "${APPLICATION_NAME}".app
