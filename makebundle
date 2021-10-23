@@ -1,0 +1,196 @@
+#!/bin/sh
+
+# Proof-of-concept to make application bundles from existing packages
+# installing only those packages that are not there or are outdated
+# on the helloSytem ISO, as determined by a pristine package database
+# from the helloSytem ISO
+
+#### TODO:
+#### Before investing much more time into this, consider rewriting it in Python
+#### (port to /usr/local/bin/app)
+#### because right now it fails on blanks in directory names and is cumbersome
+#### to write and maintain in sh - and we have existing Python code for many
+#### aspects including GUI
+
+set -e
+set -x
+
+# FIXME: Run through shellcheck and fix
+# https://github.com/koalaman/shellcheck/wiki/SC2044 and
+# https://github.com/koalaman/shellcheck/wiki/SC2045
+
+# TODO: Do not hardcode these
+APPLICATION_NAME="Scribus"
+PACKAGE_NAMES=scribus-devel
+EXECUTABLE_NAME=scribus
+
+#APPLICATION_NAME="Blender"
+#PACKAGE_NAMES=blender
+#EXECUTABLE_NAME=blender
+
+#APPLICATION_NAME="Krita"
+#PACKAGE_NAMES=krita
+#EXECUTABLE_NAME=krita
+
+#APPLICATION_NAME="Firefox"
+#PACKAGE_NAMES="firefox libvpx"
+#EXECUTABLE_NAME=firefox
+
+#APPLICATION_NAME="Firefox_ESR"
+#PACKAGE_NAMES="firefox-esr libvpx"
+#EXECUTABLE_NAME=firefox
+
+rm -rf ./"${APPLICATION_NAME}".app || continue
+rm "${APPLICATION_NAME}".app.zip || continue
+mkdir -p ./"${APPLICATION_NAME}".app/Resources/var/db/pkg ./"${APPLICATION_NAME}".app/Resources/etc
+cp -r /var/db/pkg.pristine ./"${APPLICATION_NAME}".app/Resources/var/db/pkg
+cp -r /etc/pkg ./"${APPLICATION_NAME}".app/Resources/etc
+
+# FIXME: pkg: . wrong user or group ownership (expected 0/0 versus actual 1001/1001)
+sudo chown -R root ./"${APPLICATION_NAME}".app/Resources/ # We would like to avoid this!
+
+# cp -r /var/db/pkg /tmp/chrootpkg || exit 1
+rm -rf /tmp/chrootpkg/ || true
+mkdir -p /tmp/chrootpkg/
+cp -r /var/db/pkg.pristine/local.sqlite /tmp/chrootpkg/local.sqlite || exit 1
+sudo chown -R root /tmp/chrootpkg # We would like to avoid this!
+
+sudo env PKG_DBDIR="$(readlink -f /tmp/chrootpkg)" pkg --rootdir "$(readlink -f ./"${APPLICATION_NAME}".app/Resources)" update
+
+sudo env PKG_DBDIR="$(readlink -f /tmp/chrootpkg)" pkg --rootdir "$(readlink -f ./"${APPLICATION_NAME}".app/Resources)" install -y $PACKAGE_NAMES
+# Does the right thing. But /tmp/chrootpkg is modified in this process, making it trash.
+
+sudo chown -R "${USER}" ./"${APPLICATION_NAME}".app/Resources /tmp/chrootpkg
+rm -rf /tmp/chrootpkg ./"${APPLICATION_NAME}".app/Resources/etc/FreeBSD.conf ./"${APPLICATION_NAME}".app/Resources/var/cache/pkg ./"${APPLICATION_NAME}".app/Resources/var/db/pkg
+
+cat > ./"${APPLICATION_NAME}".app/"${APPLICATION_NAME}" <<\EOF
+#!/bin/sh
+EXECUTABLE=xxx
+HERE="$(dirname "$(readlink -f "${0}")")"
+export PATH="${HERE}/Resources/usr/local/sbin":"${HERE}/Resources/usr/local/bin":"${PATH}"
+export XDG_DATA_DIRS="${HERE}/Resources/usr/local/share/:${XDG_DATA_DIRS}" 
+export QT_PLUGIN_PATH="${HERE}/Resources/usr/local/lib/qt5/plugins/:/usr/local/lib/qt5/plugins/"
+
+cd "${HERE}/Resources/usr/local/"
+
+if [ -z "${WHICH}"] ; then
+  # If there is a broken symlink, which doesn't find it
+  WHICH="${HERE}/Resources/usr/local/bin/${EXECUTABLE}"
+fi
+
+if file "${WHICH}" | grep -q "symbolic link to" ; then
+  TARGET=$(file "${WHICH}" | rev | cut -d " " -f 1 | rev)
+  exec "${HERE}/Resources/${TARGET}" "$@"
+else
+  exec "${EXECUTABLE}" "$@"
+fi
+
+EOF
+sed -i "" -e "s|xxx|${EXECUTABLE_NAME}|g" ./"${APPLICATION_NAME}".app/"${APPLICATION_NAME}" 
+chmod +x ./"${APPLICATION_NAME}".app/"${APPLICATION_NAME}"
+
+set +e # Continue in the case of errors for now
+
+# Patch rpath in binaries in bin/
+for FILE in $(find "${APPLICATION_NAME}".app/Resources/usr/local/bin/ -type f); do
+  ORIG_RPATH=$(patchelf --print-rpath "${FILE}" 2>/dev/null)
+  if [ -n "${ORIG_RPATH}" ] ; then
+    MOD_RPATH=$(echo "${ORIG_RPATH}" | sed -e 's|/usr/local|\$ORIGIN/../|g')
+    echo patchelf --set-rpath "${MOD_RPATH}:${ORIG_RPATH}" "${FILE}"
+    patchelf --set-rpath "${MOD_RPATH}:${ORIG_RPATH}" "${FILE}"
+  fi
+done
+
+# Patch rpath in libraries in lib/
+# FIXME: Use find -type f to prevent patching the same file multiple times
+for FILE in $(ls "${APPLICATION_NAME}".app/Resources/usr/local/lib/*.so* 2>/dev/null); do
+  ORIG_RPATH=$(patchelf --print-rpath "${FILE}" 2>/dev/null)
+  if [ -n "${ORIG_RPATH}" ] ; then
+    MOD_RPATH=$(echo "${ORIG_RPATH}" | sed -e 's|/usr/local|\$ORIGIN/../|g')
+    echo patchelf --set-rpath "${MOD_RPATH}:${ORIG_RPATH}" "${FILE}"
+    patchelf --set-rpath "${MOD_RPATH}:${ORIG_RPATH}" "${FILE}"
+  else
+    echo patchelf --set-rpath "\$ORIGIN" "${FILE}"
+    patchelf --set-rpath "\$ORIGIN" "${FILE}"
+  fi
+done
+
+# Patch rpath in libraries two levels under lib/
+# FIXME: Use find -type f to prevent patching the same file multiple times
+for FILE in $(ls "${APPLICATION_NAME}".app/Resources/usr/local/lib/*/*.so* 2>/dev/null); do
+  ORIG_RPATH=$(patchelf --print-rpath "${FILE}" 2>/dev/null)
+  if [ -n "${ORIG_RPATH}" ] ; then
+    MOD_RPATH=$(echo "${ORIG_RPATH}" | sed -e 's|/usr/local|\$ORIGIN/../../|g')
+    echo patchelf --set-rpath "${MOD_RPATH}:${ORIG_RPATH}" "${FILE}"
+    patchelf --set-rpath "${MOD_RPATH}:${ORIG_RPATH}" "${FILE}"
+  else
+    echo patchelf --set-rpath "\$ORIGIN:\$ORIGIN/../"
+    patchelf --set-rpath "\$ORIGIN:\$ORIGIN/../" "${FILE}"
+  fi
+done
+
+# Patch rpath in libraries three levels under lib/ (e.g., Qt plugins)
+# FIXME: Use find -type f to prevent patching the same file multiple times
+for FILE in $(ls "${APPLICATION_NAME}".app/Resources/usr/local/lib/*/*/*.so* 2>/dev/null); do
+  ORIG_RPATH=$(patchelf --print-rpath "${FILE}" 2>/dev/null)
+  if [ -n "${ORIG_RPATH}" ] ; then
+    MOD_RPATH=$(echo "${ORIG_RPATH}" | sed -e 's|/usr/local|\$ORIGIN/../../../|g')
+    echo patchelf --set-rpath "${MOD_RPATH}:${ORIG_RPATH}" "${FILE}"
+    patchelf --set-rpath "${MOD_RPATH}:${ORIG_RPATH}" "${FILE}"
+  else
+    echo patchelf --set-rpath "\$ORIGIN:\$ORIGIN/../:\$ORIGIN/../../"
+    patchelf --set-rpath "\$ORIGIN:\$ORIGIN/../::\$ORIGIN/../../" "${FILE}"
+  fi
+done
+
+set -e # End: Continue in the case of errors for now
+
+# TODO: Parse desktop file, get icon, place in correct location
+
+# Show newly created bundle in Filer (fails when run as root)
+# gdbus call --session --dest org.freedesktop.FileManager1 --object-path /org/freedesktop/FileManager1 --method org.freedesktop.FileManager1.ShowItems '["file:///'$(readlink -f "${APPLICATION_NAME}".app)'"]' ""
+
+# Quick and dirty way to find icons. TODO: Parse desktop files?
+# We already have parts of this code more properly in /usr/local/bin/app!
+# At that location, there may be a broken symlink to /usr/local/share/...
+if [ -e "${APPLICATION_NAME}".app/Resources/usr/local/share/pixmaps/"${EXECUTABLE}".png ] ; then
+  cp "${APPLICATION_NAME}".app/Resources/usr/local/share/pixmaps/"${EXECUTABLE}".png "${APPLICATION_NAME}".app/Resources/"${APPLICATION_NAME}".png
+fi
+
+# Firefox specific fixes
+if [ "${APPLICATION_NAME}" == "Firefox" ] ; then
+  cp Firefox.app/Resources/usr/local/lib/firefox/browser/chrome/icons/default/default128.png Firefox.app/Resources/Firefox.png
+fi
+
+# Firefox_ESR specific fixes
+if [ "${APPLICATION_NAME}" == "Firefox" ] ; then
+  cp Firefox_ESR.app/Resources/usr/local/lib/firefox/browser/chrome/icons/default/default128.png Firefox_ESR.app/Resources/Firefox_ESR.png
+fi
+
+# Krita specific fixes
+if [ "${APPLICATION_NAME}" == "Krita" ] ; then
+  cp Krita.app/Resources/usr/local/share/icons/hicolor/128x128/apps/krita.png Krita.app/Resources/Krita.png
+fi
+
+# Blender specific fixes
+if [ -e "${APPLICATION_NAME}".app/Resources/usr/local/bin/blender ] ; then
+  ( cd "${APPLICATION_NAME}".app/Resources/usr/local/bin ; ln -s ../share/blender/2.* . )
+  convert -fuzz 10% -transparent white -background transparent -resize 256x256 -gravity north -extent 256x256 "${APPLICATION_NAME}".app/Resources/usr/local/share/icons/hicolor/scalable/apps/blender.svg "${APPLICATION_NAME}".app/Resources/"${APPLICATION_NAME}".png
+fi
+
+# Scribus specific fixes
+# Unfortunately Scribus still has compiled in
+# access("/usr/local/share/scribus/translations/scribus",R_OK) ERR#2 'No such file or directory'
+# access("/usr/local/share/scribus/icons/",F_OK)   ERR#2 'No such file or directory'
+# DWANT_RELOCATABLE=1 in the scribus-devel Port Makefile could possibly remove the need for this
+if [ "${APPLICATION_NAME}" == "Scribus" ] ; then
+  find "${APPLICATION_NAME}".app/Resources/usr/local -type f -exec sed -i '' -e 's|/usr/local|./././././|g' {} \;
+  cp "${APPLICATION_NAME}".app/Resources/usr/local/share/icons/hicolor/256x256/apps/scribus.png "${APPLICATION_NAME}".app/Resources/"${APPLICATION_NAME}".png
+fi
+
+sudo chown -R $USER "${APPLICATION_NAME}".app 
+zip -r -y "${APPLICATION_NAME}".app.zip "${APPLICATION_NAME}".app
+sudo chown -R $USER "${APPLICATION_NAME}".app.zip
+
+# Try to launch it
+launch "${APPLICATION_NAME}".app
