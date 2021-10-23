@@ -31,7 +31,7 @@ task:
     - kldload tmpfs.ko || true
     - kldload nullfs.ko || true
     - kldload geom_uzip.ko || true
-    - pkg install -y pkg git-lite zsync wget sha bash zip devel/py-xdg librsvg2 ca_root_nss sudo ImageMagick7-nox11 # qemu-devel uefi-edk2-qemu-x86_64
+    - pkg install -y pkg wget sha zip ca_root_nss sudo ImageMagick7-nox11
     
   Build_script:
     - wget -c https://github.com/$(wget -q https://github.com/helloSystem/ISO/releases/tag/experimental-12.2 -O - | grep "hello-.*.amd64.iso.pkg.zip" | head -n 1 | cut -d '"' -f 2)
