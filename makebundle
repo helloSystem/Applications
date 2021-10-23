@@ -46,6 +46,13 @@ cat > ./"${APPLICATION_NAME}".app/"${APPLICATION_NAME}" <<\EOF
 #!/bin/sh
 EXECUTABLE=xxx
 HERE="$(dirname "$(readlink -f "${0}")")"
+
+VERSION=$(pkg show hello | head -n 1 | cut -d "-" -f 2 | cut -d "_" -f 1)
+if [ "$VERSION" != "0.7.0" ] ; then
+  echo "helloSystem 0.7.0 is needed to run this application." >&2
+  exit 1
+fi
+
 export PATH="${HERE}/Resources/usr/local/sbin":"${HERE}/Resources/usr/local/bin":"${PATH}"
 export XDG_DATA_DIRS="${HERE}/Resources/usr/local/share/:${XDG_DATA_DIRS}" 
 export QT_PLUGIN_PATH="${HERE}/Resources/usr/local/lib/qt5/plugins/:/usr/local/lib/qt5/plugins/"
