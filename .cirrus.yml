@@ -43,7 +43,7 @@ task:
     - mv usr/local/furybsd/uzip/var/db/pkg /var/db/pkg.pristine
     - mkdir -p artifacts/
     - sh ../makebundle
-    - mkdir -p artifacts ; mv *.zip artifacts/
+    - mkdir -p artifacts ; mv "${APPLICATION_NAME}"*.zip artifacts/
     - ls -lh "${CIRRUS_WORKING_DIR}"/work/artifacts/*.zip || false # Error out if zip was not produced to mitigate the above
     
   Upload_script:
