@@ -129,6 +129,10 @@ for FILE in $(ls "${APPLICATION_NAME}".app/Resources/usr/local/lib/*/*/*.so* 2>/
   fi
 done
 
+# Patch rpath in Python libraries
+find "${APPLICATION_NAME}".app/Resources/usr/local/lib/python*/site-packages/*/*/*.so -exec patchelf --set-rpath '$ORIGIN/../../../../' {} \;
+find "${APPLICATION_NAME}".app/Resources/usr/local/lib/python*/site-packages/*/*.so -exec patchelf --set-rpath '$ORIGIN/../../../' {} \;
+
 set -e # End: Continue in the case of errors for now
 
 # TODO: Parse desktop file, get icon, place in correct location
@@ -180,9 +184,14 @@ if [ "${APPLICATION_NAME}" == "LibreOffice" ] ; then
   cp "${APPLICATION_NAME}".app/Resources/usr/local/share/icons/hicolor/256x256/apps/libreoffice-main.png "${APPLICATION_NAME}".app/Resources/"${APPLICATION_NAME}".png
 fi
 
-sudo chown -R $USER "${APPLICATION_NAME}".app 
-zip -r -y "${APPLICATION_NAME}".app.zip "${APPLICATION_NAME}".app
-sudo chown -R $USER "${APPLICATION_NAME}".app.zip
+# Inkscape specific fixes
+if [ "${APPLICATION_NAME}" == "Inkscape" ] ; then
+  convert -fuzz 10% -transparent white -background transparent -resize 256x256 -gravity north -extent 256x256 "${APPLICATION_NAME}".app/Resources/usr/local/share/inkscape/pixmaps/inkscape.svg "${APPLICATION_NAME}".app/Resources/"${APPLICATION_NAME}".png
+fi
 
 # Try to launch it
 # launch "${APPLICATION_NAME}".app
+
+sudo chown -R $USER "${APPLICATION_NAME}".app 
+zip -r -y "${APPLICATION_NAME}".app.zip "${APPLICATION_NAME}".app
+sudo chown -R $USER "${APPLICATION_NAME}".app.zip
