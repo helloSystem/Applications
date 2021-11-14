@@ -22,7 +22,7 @@ set -x
 # Add jsm222 repository
 cat > /usr/local/etc/pkg/repos/helloDesktop.conf <<\EOF
 helloDesktop: {
-        url: "pkg+http://build.schmitz.computer/packages/122amd64-quarterly",
+        url: "pkg+http://build.schmitz.computer/packages/${ABI}-mozillapatched",
         mirror_type: "srv",
         enabled: yes,
         signature_type: "pubkey",
