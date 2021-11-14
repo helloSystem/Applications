@@ -3,17 +3,16 @@ task:
     cpu: 2
     memory: 8G
     matrix:
-      # image: freebsd-12-1-release-amd64 # EOL
-      - image: freebsd-12-2-release-amd64
-      # image: freebsd-13-0-current-amd64-v20201112 # Image way too large, HIDPI broken and iichid trackpad broken on Acer
+      # image: freebsd-12-2-release-amd64
+      - image: freebsd-13-0-release-amd64
 
   env:
     USER: 1000
     CIRRUS_CLONE_DEPTH: 1
     GITHUB_TOKEN: ENCRYPTED[!0f42e3f70fd51cdeddfe7e98160982fc9efe7e8a26869b725fcd5de05d067a7100b994cf52f0f1b470a983148e0b8ec2!]
-    APPLICATION_NAME: Firefox
-    PACKAGE_NAMES: firefox
-    EXECUTABLE_NAME: firefox
+    APPLICATION_NAME: Chromium
+    PACKAGE_NAMES: chromium
+    EXECUTABLE_NAME: chrome
     
   auto_cancellation: false
   stateful: false
