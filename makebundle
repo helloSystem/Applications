@@ -36,7 +36,7 @@ sudo chown -R root /tmp/chrootpkg # We would like to avoid this!
 
 sudo env PKG_DBDIR="$(readlink -f /tmp/chrootpkg)" pkg --rootdir "$(readlink -f ./"${APPLICATION_NAME}".app/Resources)" update
 
-sudo env PKG_DBDIR="$(readlink -f /tmp/chrootpkg)" pkg --rootdir "$(readlink -f ./"${APPLICATION_NAME}".app/Resources)" install -y $PACKAGE_NAMES
+sudo env PKG_DBDIR="$(readlink -f /tmp/chrootpkg)" pkg --rootdir "$(readlink -f ./"${APPLICATION_NAME}".app/Resources)" install -y --no-scripts $PACKAGE_NAMES
 # Does the right thing. But /tmp/chrootpkg is modified in this process, making it trash.
 
 sudo chown -R "${USER}" ./"${APPLICATION_NAME}".app/Resources /tmp/chrootpkg
