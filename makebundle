@@ -50,6 +50,9 @@ q9cTv5oaRy9FQy0NdGwGuqUCAwEAAQ==
 -----END PUBLIC KEY-----
 EOF
 
+mkdir -p ./"${APPLICATION_NAME}".app/Resources/usr/share/keys/pkg
+cp -r /usr/share/keys/pkg/trusted ./"${APPLICATION_NAME}".app/Resources/usr/share/keys/pkg/
+
 pkg update
 
 rm -rf ./"${APPLICATION_NAME}".app || continue
@@ -228,9 +231,13 @@ if [ "${APPLICATION_NAME}" == "Chromium" ] ; then
   cp "${APPLICATION_NAME}".app//Resources/usr/local/share/icons/hicolor/128x128/apps/chrome.png "${APPLICATION_NAME}".app/Resources/"${APPLICATION_NAME}".png
 fi
 
+rm -rf ./"${APPLICATION_NAME}".app/Resources/usr/share/keys/pkg/
+
 # Try to launch it
 # launch "${APPLICATION_NAME}".app
 
 sudo chown -R $USER "${APPLICATION_NAME}".app 
 zip -r -y "${APPLICATION_NAME}".app.zip "${APPLICATION_NAME}".app
-sudo chown -R $USER "${APPLICATION_NAME}".app.zip
+
+makefs "${APPLICATION_NAME}".app.ufs "${APPLICATION_NAME}".app
+mkuzip -A zstd -C 15 -o  "${APPLICATION_NAME}".app.uzip makefs "${APPLICATION_NAME}".app.ufs
