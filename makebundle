@@ -20,6 +20,7 @@ set -x
 # https://github.com/koalaman/shellcheck/wiki/SC2045
 
 # Add jsm222 repository
+mkdir -p /usr/local/etc/pkg/repos/
 cat > /usr/local/etc/pkg/repos/helloDesktop.conf <<\EOF
 helloDesktop: {
         url: "pkg+http://build.schmitz.computer/packages/${ABI}-mozillapatched",
@@ -31,6 +32,7 @@ helloDesktop: {
 }
 EOF
 
+mkdir -p /usr/local/etc/ssl/certs/
 cat > /usr/local/etc/ssl/certs/jsm222.cert <<\EOF
 -----BEGIN PUBLIC KEY-----
 MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA5gEt92AHUkYkZH2Q2nP3
