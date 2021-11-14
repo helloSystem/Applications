@@ -38,7 +38,7 @@ task:
     - mkdir -p work
     - mount -t tmpfs tmpfs ./work
     - cd work
-    - wget -c https://github.com/$(wget -q https://github.com/helloSystem/ISO/releases/tag/experimental-12.2 -O - | grep "hello-.*.amd64.iso.pkg.zip" | head -n 1 | cut -d '"' -f 2)
+    - wget -c https://github.com/$(wget -q https://github.com/helloSystem/ISO/releases/tag/experimental-13.0 -O - | grep "hello-.*.amd64.iso.pkg.zip" | head -n 1 | cut -d '"' -f 2)
     - unzip *.iso.pkg.zip
     - mv usr/local/furybsd/uzip/var/db/pkg /var/db/pkg.pristine
     - mkdir -p artifacts/
