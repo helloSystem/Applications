@@ -19,6 +19,12 @@ set -x
 # https://github.com/koalaman/shellcheck/wiki/SC2044 and
 # https://github.com/koalaman/shellcheck/wiki/SC2045
 
+# Workaround for:
+# pkg: Error opening the trusted directory /usr/share/keys/pkg/trusted
+# pkg: Error loading trusted certificates
+mkdir -p /usr/share/keys/pkg/trusted/
+mkdir -p /usr/share/keys/pkg/trusted/
+
 # Add jsm222 repository
 # mkdir -p /usr/local/etc/pkg/repos/
 # cat > /usr/local/etc/pkg/repos/helloDesktop.conf <<\EOF
