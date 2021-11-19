@@ -20,17 +20,17 @@ set -x
 # https://github.com/koalaman/shellcheck/wiki/SC2045
 
 # Add jsm222 repository
-mkdir -p /usr/local/etc/pkg/repos/
-cat > /usr/local/etc/pkg/repos/helloDesktop.conf <<\EOF
-helloDesktop: {
-        url: "pkg+http://build.schmitz.computer/packages/${ABI}-mozillapatched",
-        mirror_type: "srv",
-        enabled: yes,
-        signature_type: "pubkey",
-        pubkey: "/usr/local/etc/ssl/certs/jsm222.cert",
-        priority: 100
-}
-EOF
+# mkdir -p /usr/local/etc/pkg/repos/
+# cat > /usr/local/etc/pkg/repos/helloDesktop.conf <<\EOF
+# helloDesktop: {
+#         url: "pkg+http://build.schmitz.computer/packages/${ABI}-mozillapatched",
+#         mirror_type: "srv",
+#         enabled: yes,
+#         signature_type: "pubkey",
+#         pubkey: "/usr/local/etc/ssl/certs/jsm222.cert",
+#         priority: 100
+# }
+# EOF
 
 mkdir -p /usr/local/etc/ssl/certs/
 cat > /usr/local/etc/ssl/certs/jsm222.cert <<\EOF
@@ -49,9 +49,6 @@ gFM24eVEKju1PHkBDHVAD+NGfq4g/hcbAbcrtjxDrs1ztdwjtCJmFNcEYFjz0DRc
 q9cTv5oaRy9FQy0NdGwGuqUCAwEAAQ==
 -----END PUBLIC KEY-----
 EOF
-
-mkdir -p ./"${APPLICATION_NAME}".app/Resources/usr/share/keys/pkg
-cp -r /usr/share/keys/pkg/trusted ./"${APPLICATION_NAME}".app/Resources/usr/share/keys/pkg/
 
 pkg update
 
