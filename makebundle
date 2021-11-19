@@ -19,12 +19,6 @@ set -x
 # https://github.com/koalaman/shellcheck/wiki/SC2044 and
 # https://github.com/koalaman/shellcheck/wiki/SC2045
 
-# Workaround for:
-# pkg: Error opening the trusted directory /usr/share/keys/pkg/trusted
-# pkg: Error loading trusted certificates
-# mkdir -p /usr/share/keys/pkg/trusted/
-# mkdir -p /usr/share/keys/pkg/revoked/
-
 # Add jsm222 repository
 mkdir -p /usr/local/etc/pkg/repos/
 cat > /usr/local/etc/pkg/repos/helloDesktop.conf <<\EOF
@@ -249,4 +243,4 @@ sudo chown -R $USER "${APPLICATION_NAME}".app
 mkdir -p diskroot
 mv "${APPLICATION_NAME}".app diskroot/
 makefs -o label="${APPLICATION_NAME}" "${APPLICATION_NAME}".app.ufs diskroot/
-mkuzip -A zstd -C 15 -o  "${APPLICATION_NAME}".app.uzip "${APPLICATION_NAME}".app.ufs
+mkuzip -A zstd -C 15 -o  "${APPLICATION_NAME}".img "${APPLICATION_NAME}".app.ufs
