@@ -214,24 +214,24 @@ fi
 # access("/usr/local/share/scribus/translations/scribus",R_OK) ERR#2 'No such file or directory'
 # access("/usr/local/share/scribus/icons/",F_OK)   ERR#2 'No such file or directory'
 # DWANT_RELOCATABLE=1 in the scribus-devel Port Makefile could possibly remove the need for this
-if [ "${APPLICATION_NAME}" == "Scribus" ] ; then
+if [ "${PACKAGE_NAME}" == "scribus-devel" ] ; then
   find "${APPLICATION_NAME}".app/Resources/usr/local -type f -exec sed -i '' -e 's|/usr/local|./././././|g' {} \;
   cp "${APPLICATION_NAME}".app/Resources/usr/local/share/icons/hicolor/256x256/apps/scribus.png "${APPLICATION_NAME}".app/Resources/"${APPLICATION_NAME}".png
 fi
 
 # LibreOffice specific fixes
-if [ "${APPLICATION_NAME}" == "LibreOffice" ] ; then
+if [ "${PACKAGE_NAME}" == "libreoffice" ] ; then
   ( cd "${APPLICATION_NAME}".app ; ln -s Resources/usr/local/lib . )
   cp "${APPLICATION_NAME}".app/Resources/usr/local/share/icons/hicolor/256x256/apps/libreoffice-main.png "${APPLICATION_NAME}".app/Resources/"${APPLICATION_NAME}".png
 fi
 
 # Inkscape specific fixes
-if [ "${APPLICATION_NAME}" == "Inkscape" ] ; then
+if [ "${PACKAGE_NAME}" == "inkscape" ] ; then
   convert -fuzz 10% -transparent white -background transparent -resize 256x256 -gravity north -extent 256x256 "${APPLICATION_NAME}".app/Resources/usr/local/share/inkscape/pixmaps/inkscape.svg "${APPLICATION_NAME}".app/Resources/"${APPLICATION_NAME}".png
 fi
 
 # Chromium specific fixes
-if [ "${APPLICATION_NAME}" == "Chromium" ] ; then
+if [ "${PACKAGE_NAME}" == "chromium" ] ; then
   sed -i '' -e 's|^exec /usr/local/share/chromium/chrome .*|exec "$(dirname "$(readlink -f "${0}")")"/../share/chromium/chrome ${1+"$@"}|g' "${APPLICATION_NAME}".app/Resources/usr/local/bin/chrome
   cp "${APPLICATION_NAME}".app//Resources/usr/local/share/icons/hicolor/128x128/apps/chrome.png "${APPLICATION_NAME}".app/Resources/"${APPLICATION_NAME}".png
   patchelf --set-rpath '$ORIGIN/../../lib' "${APPLICATION_NAME}".app/Resources/usr/local/share/chromium/chrome
