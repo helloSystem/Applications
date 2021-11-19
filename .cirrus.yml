@@ -42,7 +42,7 @@ task:
     - mv usr/local/furybsd/uzip/var/db/pkg /var/db/pkg.pristine
     - mkdir -p artifacts/
     - sh ../makebundle
-    - mkdir -p artifacts ; mv "${APPLICATION_NAME}"*zip artifacts/
+    - mkdir -p artifacts ; mv "${APPLICATION_NAME}"*img artifacts/
     
   Upload_script:
     - export VER=$(uname -r | cut -d "-" -f 1) # No way to pass on from Build_script to Upload_script?
