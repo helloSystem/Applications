@@ -22,40 +22,39 @@ set -x
 # Workaround for:
 # pkg: Error opening the trusted directory /usr/share/keys/pkg/trusted
 # pkg: Error loading trusted certificates
-mkdir -p /usr/share/keys/pkg/trusted/
-mkdir -p /usr/share/keys/pkg/revoked/
-find /usr/share/keys/pkg/
+# mkdir -p /usr/share/keys/pkg/trusted/
+# mkdir -p /usr/share/keys/pkg/revoked/
 
-# Add jsm222 repository
-# mkdir -p /usr/local/etc/pkg/repos/
-# cat > /usr/local/etc/pkg/repos/helloDesktop.conf <<\EOF
-# helloDesktop: {
-#         url: "pkg+http://build.schmitz.computer/packages/${ABI}-mozillapatched",
-#         mirror_type: "srv",
-#         enabled: yes,
-#         signature_type: "pubkey",
-#         pubkey: "/usr/local/etc/ssl/certs/jsm222.cert",
-#         priority: 100
-# }
-# EOF
+Add jsm222 repository
+mkdir -p /usr/local/etc/pkg/repos/
+cat > /usr/local/etc/pkg/repos/helloDesktop.conf <<\EOF
+helloDesktop: {
+        url: "pkg+http://build.schmitz.computer/packages/${ABI}-mozillapatched",
+        mirror_type: "srv",
+        enabled: yes,
+        signature_type: "pubkey",
+        pubkey: "/usr/local/etc/ssl/certs/jsm222.cert",
+        priority: 100
+}
+EOF
 
-# mkdir -p /usr/local/etc/ssl/certs/
-# cat > /usr/local/etc/ssl/certs/jsm222.cert <<\EOF
-# -----BEGIN PUBLIC KEY-----
-# MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA5gEt92AHUkYkZH2Q2nP3
-# 2/Wu7gxbMEno5iqi1ea327lHmhJB18E0mW9dKYgxz74PbbTAmyaMdY4G1vn3cStp
-# jKVnrOCsNboaZ1L6riYFTjZX0pVAQYdtblCNjTf92X1kk8Yp1jy3baH8s19IKVWD
-# jX+2j33BOjRH3jbiLxdPu51wPItDUM4UU+mdrMH2+RgHjVX3ZkgRe/bYxMgrYBQg
-# roEwp0Pv9DbDQ0Vx3qIBJahQ7zfDCWZI1urr85/kM58KXYLt1YHW+vRd3scOm1IE
-# mRON0zVO2f8+obzy3lLNnZj/XIWxh+LNI4kmmdoHMksysYtrRz1bpcnsY8qOe4g3
-# X7q+i8k0JaaMwwD9YvKf6HyQ09rFt3WqV2AAOwR0835oHxCENJJFcoUCMCaKjNSF
-# OZyuYKKPqSm8BKj/QaoXBIF1fQJBJzrINYSUj4/M6TWKVTSO8H4s+eiqfD7FYJ3h
-# jSZ2ubydtTOef1Tk79OVoo8Ns7FqzCK7ffOvELxuY2OMDIKrw0sCfpkI9uM5Dfrr
-# rYXn4dwvZLwB+tnBbKBXIfjAvwqjHeWfzqgUHSk/Slqh7UEYL+BnLfHxLMVN0Omk
-# gFM24eVEKju1PHkBDHVAD+NGfq4g/hcbAbcrtjxDrs1ztdwjtCJmFNcEYFjz0DRc
-# q9cTv5oaRy9FQy0NdGwGuqUCAwEAAQ==
-# -----END PUBLIC KEY-----
-# EOF
+mkdir -p /usr/local/etc/ssl/certs/
+cat > /usr/local/etc/ssl/certs/jsm222.cert <<\EOF
+-----BEGIN PUBLIC KEY-----
+MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA5gEt92AHUkYkZH2Q2nP3
+2/Wu7gxbMEno5iqi1ea327lHmhJB18E0mW9dKYgxz74PbbTAmyaMdY4G1vn3cStp
+jKVnrOCsNboaZ1L6riYFTjZX0pVAQYdtblCNjTf92X1kk8Yp1jy3baH8s19IKVWD
+jX+2j33BOjRH3jbiLxdPu51wPItDUM4UU+mdrMH2+RgHjVX3ZkgRe/bYxMgrYBQg
+roEwp0Pv9DbDQ0Vx3qIBJahQ7zfDCWZI1urr85/kM58KXYLt1YHW+vRd3scOm1IE
+mRON0zVO2f8+obzy3lLNnZj/XIWxh+LNI4kmmdoHMksysYtrRz1bpcnsY8qOe4g3
+X7q+i8k0JaaMwwD9YvKf6HyQ09rFt3WqV2AAOwR0835oHxCENJJFcoUCMCaKjNSF
+OZyuYKKPqSm8BKj/QaoXBIF1fQJBJzrINYSUj4/M6TWKVTSO8H4s+eiqfD7FYJ3h
+jSZ2ubydtTOef1Tk79OVoo8Ns7FqzCK7ffOvELxuY2OMDIKrw0sCfpkI9uM5Dfrr
+rYXn4dwvZLwB+tnBbKBXIfjAvwqjHeWfzqgUHSk/Slqh7UEYL+BnLfHxLMVN0Omk
+gFM24eVEKju1PHkBDHVAD+NGfq4g/hcbAbcrtjxDrs1ztdwjtCJmFNcEYFjz0DRc
+q9cTv5oaRy9FQy0NdGwGuqUCAwEAAQ==
+-----END PUBLIC KEY-----
+EOF
 
 pkg update
 echo "pkg update ran outside of the chroot"
@@ -247,4 +246,4 @@ sudo chown -R $USER "${APPLICATION_NAME}".app
 zip -r -y "${APPLICATION_NAME}".app.zip "${APPLICATION_NAME}".app
 
 makefs "${APPLICATION_NAME}".app.ufs "${APPLICATION_NAME}".app
-mkuzip -A zstd -C 15 -o  "${APPLICATION_NAME}".app.uzip makefs "${APPLICATION_NAME}".app.ufs
+mkuzip -A zstd -C 15 -o  "${APPLICATION_NAME}".app.uzip "${APPLICATION_NAME}".app.ufs
