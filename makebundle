@@ -53,6 +53,11 @@ EOF
 pkg update
 echo "pkg update ran outside of the chroot"
 
+# Get the version that is going to be installed
+PACKAGE_NAME=$(echo ${PACKAGE_NAMES} | cut -d " " -f 1)
+VERSION=$(pkg search ${PACKAGE_NAME} | grep -e "^${PACKAGE_NAME}-[0-9]*\." | tail -n 1 | awk '{print $1}' | cut -d "-" -f 2-99)
+APPLICATION_NAME="${APPLICATION_NAME} ${VERSION}"
+
 rm -rf ./"${APPLICATION_NAME}".app || continue
 # rm "${APPLICATION_NAME}".app.zip || continue
 mkdir -p ./"${APPLICATION_NAME}".app/Resources/var/db/pkg ./"${APPLICATION_NAME}".app/Resources/etc
