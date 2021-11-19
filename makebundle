@@ -235,6 +235,7 @@ fi
 if [ "${APPLICATION_NAME}" == "Chromium" ] ; then
   sed -i '' -e 's|^exec /usr/local/share/chromium/chrome .*|exec "$(dirname "$(readlink -f "${0}")")"/../share/chromium/chrome ${1+"$@"}|g' "${APPLICATION_NAME}".app/Resources/usr/local/bin/chrome
   cp "${APPLICATION_NAME}".app//Resources/usr/local/share/icons/hicolor/128x128/apps/chrome.png "${APPLICATION_NAME}".app/Resources/"${APPLICATION_NAME}".png
+  patchelf --set-rpath '$ORIGIN/../../lib' "${APPLICATION_NAME}".app/Resources/usr/local/share/chromium/chrome
 fi
 
 rm -rf ./"${APPLICATION_NAME}".app/Resources/usr/share/keys/pkg/
