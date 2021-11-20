@@ -188,18 +188,11 @@ if [ -e "${APPLICATION_NAME}".app/Resources/usr/local/share/pixmaps/"${EXECUTABL
   cp "${APPLICATION_NAME}".app/Resources/usr/local/share/pixmaps/"${EXECUTABLE}".png "${APPLICATION_NAME}".app/Resources/"${APPLICATION_NAME}".png
 fi
 
-# Firefox specific fixes
-if [ "${APPLICATION_NAME}" == "Firefox" ] ; then
-  cp "${APPLICATION_NAME}".app/Resources/usr/local/lib/firefox/browser/chrome/icons/default/default128.png "${APPLICATION_NAME}".app/Resources/"${APPLICATION_NAME}".png
-fi
-
-# Firefox_ESR specific fixes
-if [ "${APPLICATION_NAME}" == "Firefox_ESR" ] ; then
-  cp "${APPLICATION_NAME}".app/Resources/usr/local/lib/firefox/browser/chrome/icons/default/default128.png "${APPLICATION_NAME}".app/Resources/"${APPLICATION_NAME}".png
-fi
+# Mozilla specific fixes (Firefox, Firefox ESR, Thunderbird)
+"${APPLICATION_NAME}".app/Resources/usr/ -name default128.png -exec cp {} "${APPLICATION_NAME}".app/Resources/"${APPLICATION_NAME}".png \; 2>&1 || true
 
 # Krita specific fixes
-if [ "${APPLICATION_NAME}" == "Krita" ] ; then
+if [ "${PACKAGE_NAME}" == "krita" ] ; then
   cp "${APPLICATION_NAME}".app/Resources/usr/local/share/icons/hicolor/128x128/apps/krita.png "${APPLICATION_NAME}".app/Resources/"${APPLICATION_NAME}".png
 fi
 
