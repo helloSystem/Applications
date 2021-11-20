@@ -41,7 +41,7 @@ task:
     - unzip *.iso.pkg.zip
     - mv usr/local/furybsd/uzip/var/db/pkg /var/db/pkg.pristine
     - mkdir -p artifacts/
-    - sh ../makebundle
+    - sh -ex ../makebundle
     - mkdir -p artifacts ; mv "${APPLICATION_NAME}"*img artifacts/
     
   Upload_script:
