@@ -189,7 +189,7 @@ if [ -e "${APPLICATION_NAME}".app/Resources/usr/local/share/pixmaps/"${EXECUTABL
 fi
 
 # Mozilla specific fixes (Firefox, Firefox ESR, Thunderbird)
-"${APPLICATION_NAME}".app/Resources/usr/ -name default128.png -exec cp {} "${APPLICATION_NAME}".app/Resources/"${APPLICATION_NAME}".png \; 2>&1 || true
+find "${APPLICATION_NAME}".app/Resources/usr/ -name default128.png -exec cp {} "${APPLICATION_NAME}".app/Resources/"${APPLICATION_NAME}".png \; 2>&1 || true
 
 # Krita specific fixes
 if [ "${PACKAGE_NAME}" == "krita" ] ; then
