@@ -195,7 +195,7 @@ find "${APPLICATION_NAME}".app/Resources/usr/ -name default128.png -exec cp {} "
 if [ "${PACKAGE_NAME}" == "firefox" ] || [ "${PACKAGE_NAME}" == "firefox-esr" ] ; then
  mkdir -p cp "${APPLICATION_NAME}".app/Resources/usr/local/lib/firefox/distribution/extensions/
  URLA=$(wget -c "https://api.github.com/repos/gorhill/uBlock/releases" -O - | grep browser_download_url | grep 'firefox.signed.xpi"' | head -n 1 | cut -d '"' -f 4)
- URLB=$(wget -q -c "https://addons.mozilla.org/en-US/firefox/addon/i-dont-care-about-cookies/" -O - | sed -e 's|\\\u002F|/|g' | grep -o -e 'https[^\"]*xpi' | head -n 1)
+ URLB=$(wget -q -c "https://addons.mozilla.org/en-US/firefox/addon/i-dont-care-about-cookies/" -O - | sed -e 's|\\u002F|/|g' | grep -o -e 'https[^\"]*xpi' | head -n 1)
  wget -c -q "$URLA" -O "${APPLICATION_NAME}".app/Resources/usr/local/lib/firefox/distribution/extensions/uBlock0@raymondhill.net.xpi
  wget -c -q "$URLB" -O "${APPLICATION_NAME}".app/Resources/usr/local/lib/firefox/distribution/extensions/jid1-KKzOGWgsW3Ao4Q@jetpack.xpi
 fi
