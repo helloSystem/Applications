@@ -191,6 +191,16 @@ fi
 # Mozilla specific fixes (Firefox, Firefox ESR, Thunderbird)
 find "${APPLICATION_NAME}".app/Resources/usr/ -name default128.png -exec cp {} "${APPLICATION_NAME}".app/Resources/"${APPLICATION_NAME}".png \; 2>&1 || true
 
+# Firefox specific fixes: Bundle uBlock Origin and i-dont-care-about-cookies extensions
+if [ "${PACKAGE_NAME}" == "firefox" ] || [ "${PACKAGE_NAME}" == "firefox-esr" ] ; then
+ mkdir -p cp "${APPLICATION_NAME}".app/Resources/usr/local/lib/firefox/distribution/extensions/
+ URLA=$(wget -c "https://api.github.com/repos/gorhill/uBlock/releases" -O - | grep browser_download_url | grep 'firefox.signed.xpi"' | head -n 1 | cut -d '"' -f 4)
+ URLB=$(wget -q -c "https://addons.mozilla.org/en-US/firefox/addon/i-dont-care-about-cookies/" -O - | sed -e 's|\\\u002F|/|g' | grep -o -e 'https[^\"]*xpi' | head -n 1)
+ wget -c -q "$URLA" -O "${APPLICATION_NAME}".app/Resources/usr/local/lib/firefox/distribution/extensions/uBlock0@raymondhill.net.xpi
+ wget -c -q "$URLB" -O "${APPLICATION_NAME}".app/Resources/usr/local/lib/firefox/distribution/extensions/jid1-KKzOGWgsW3Ao4Q@jetpack.xpi
+fi
+
+
 # Krita specific fixes
 if [ "${PACKAGE_NAME}" == "krita" ] ; then
   cp "${APPLICATION_NAME}".app/Resources/usr/local/share/icons/hicolor/128x128/apps/krita.png "${APPLICATION_NAME}".app/Resources/"${APPLICATION_NAME}".png
