@@ -12,7 +12,7 @@ task:
     GITHUB_TOKEN: ENCRYPTED[!0f42e3f70fd51cdeddfe7e98160982fc9efe7e8a26869b725fcd5de05d067a7100b994cf52f0f1b470a983148e0b8ec2!]
     APPLICATION_NAME: Firefox ESR
     PACKAGE_NAMES: firefox-esr
-    EXECUTABLE_NAME: firefox-ese
+    EXECUTABLE_NAME: firefox
     
   auto_cancellation: false
   stateful: false
