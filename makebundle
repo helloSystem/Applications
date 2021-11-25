@@ -252,4 +252,4 @@ sudo chown -R $USER "${APPLICATION_NAME}".app
 mkdir -p diskroot
 mv "${APPLICATION_NAME}".app diskroot/
 makefs -o label="${APPLICATION_NAME}" "${APPLICATION_NAME}".app.ufs diskroot/
-mkuzip -A zstd -C 15 -o  "${APPLICATION_NAME}".img "${APPLICATION_NAME}".app.ufs
+mkuzip -A zstd -C 15 -d -s 262144 -o "${APPLICATION_NAME}".img "${APPLICATION_NAME}".app.ufs
