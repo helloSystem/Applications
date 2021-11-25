@@ -1,7 +1,7 @@
 task:
   freebsd_instance:
-    cpu: 2
-    memory: 8G
+    cpu: 4
+    memory: 16G
     matrix:
       # image: freebsd-12-2-release-amd64
       - image: freebsd-13-0-release-amd64
@@ -10,9 +10,9 @@ task:
     USER: 1000
     CIRRUS_CLONE_DEPTH: 1
     GITHUB_TOKEN: ENCRYPTED[!0f42e3f70fd51cdeddfe7e98160982fc9efe7e8a26869b725fcd5de05d067a7100b994cf52f0f1b470a983148e0b8ec2!]
-    APPLICATION_NAME: Firefox ESR
-    PACKAGE_NAMES: firefox-esr
-    EXECUTABLE_NAME: firefox
+    APPLICATION_NAME: LibreOffice
+    PACKAGE_NAMES: libreoffice libreoffice-i18n
+    EXECUTABLE_NAME: libreoffice
     
   auto_cancellation: false
   stateful: false
