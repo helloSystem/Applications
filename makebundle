@@ -199,6 +199,13 @@ if [ "${PACKAGE_NAME}" == "firefox" ] || [ "${PACKAGE_NAME}" == "firefox-esr" ] 
  URLB=$(wget -q -c "https://addons.mozilla.org/en-US/firefox/addon/i-dont-care-about-cookies/" -O - | sed -e 's|\\u002F|/|g' | grep -o -e 'https[^\"]*xpi' | head -n 1)
  wget -c -q "$URLA" -O "${APPLICATION_NAME}".app/Resources/usr/local/lib/firefox/distribution/extensions/uBlock0@raymondhill.net.xpi
  wget -c -q "$URLB" -O "${APPLICATION_NAME}".app/Resources/usr/local/lib/firefox/distribution/extensions/jid1-KKzOGWgsW3Ao4Q@jetpack.xpi
+ # Patch libxul.so to accept newer versions of libicui and libicuuc; https://github.com/helloSystem/Applications/issues/4
+ SEARCH=$(patchelf --print-needed "${APPLICATION_NAME}".app/Resources/usr/local/lib/firefox/libxul.so" | grep libicui)
+ patchelf --remove-needed "${SEARCH}" "${APPLICATION_NAME}".app/Resources/usr/local/lib/firefox/libxul.so"
+ patchelf --add-needed "libicui18n.so" "${APPLICATION_NAME}".app/Resources/usr/local/lib/firefox/libxul.so" 
+ SEARCH=$(patchelf --print-needed "${APPLICATION_NAME}".app/Resources/usr/local/lib/firefox/libxul.so" | grep libicuuc)
+ patchelf --remove-needed "${SEARCH}" "${APPLICATION_NAME}".app/Resources/usr/local/lib/firefox/libxul.so"
+ patchelf --add-needed "libicuuc.so" "${APPLICATION_NAME}".app/Resources/usr/local/lib/firefox/libxul.so" 
 fi
 
 
